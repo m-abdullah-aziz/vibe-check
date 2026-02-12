@@ -4,105 +4,105 @@ const MOODS = {
   happy: {
     emoji: "☀️",
     gradient: ["#FFD700", "#FF6B35", "#FF1493"],
-    genre: "feel-good pop",
+    genre: "comedy & feel-good stories",
     quotes: [
       "Joy is not in things; it is in us. — Richard Wagner",
       "Happiness is a warm puppy. — Charles M. Schulz",
       "The sun himself is weak when he first rises. — Charles Dickens",
     ],
     keywords: ["happy", "joy", "excited", "great", "amazing", "wonderful", "fantastic", "awesome", "love", "blessed", "grateful", "elated", "thrilled", "euphoric", "cheerful", "delighted"],
-    spotifyQuery: "happy+feel+good+vibes",
+    podcastQuery: "comedy+feel+good+happiness",
     bg: "#1a0a00",
   },
   chill: {
     emoji: "🌊",
     gradient: ["#00C9FF", "#92FE9D", "#00B4DB"],
-    genre: "lo-fi chill beats",
+    genre: "mindfulness & meditation",
     quotes: [
       "Almost everything will work again if you unplug it for a while. — Anne Lamott",
       "Calm mind brings inner strength. — Dalai Lama",
       "In the middle of difficulty lies opportunity. — Albert Einstein",
     ],
     keywords: ["chill", "relax", "calm", "peaceful", "serene", "mellow", "easy", "laid back", "content", "comfortable", "cozy", "zen", "tranquil", "soothing"],
-    spotifyQuery: "lofi+chill+beats+relax",
+    podcastQuery: "mindfulness+meditation+calm+relaxation",
     bg: "#000a0f",
   },
   sad: {
     emoji: "🌧️",
     gradient: ["#4B6CB7", "#182848", "#2C3E50"],
-    genre: "melancholic indie",
+    genre: "mental health & comfort",
     quotes: [
       "The wound is the place where the light enters you. — Rumi",
       "Even the darkest night will end and the sun will rise. — Victor Hugo",
       "Stars can't shine without darkness. — D.H. Sidebottom",
     ],
     keywords: ["sad", "down", "depressed", "blue", "lonely", "heartbroken", "miss", "cry", "tears", "gloomy", "melancholy", "grief", "sorrow", "hurt", "lost", "empty"],
-    spotifyQuery: "sad+indie+melancholy+rainy",
+    podcastQuery: "mental+health+healing+comfort+grief",
     bg: "#050810",
   },
   angry: {
     emoji: "🔥",
     gradient: ["#FF0000", "#DC143C", "#8B0000"],
-    genre: "aggressive rock & metal",
+    genre: "motivation & empowerment",
     quotes: [
       "Speak when you are angry and you'll make the best speech you'll ever regret. — Ambrose Bierce",
       "Fire that's closest kept burns most of all. — Shakespeare",
       "Anger is an acid that does more harm to the vessel. — Mark Twain",
     ],
     keywords: ["angry", "mad", "furious", "rage", "frustrated", "annoyed", "irritated", "pissed", "hate", "livid", "fuming", "outraged", "bitter", "hostile"],
-    spotifyQuery: "angry+rock+metal+intense",
+    podcastQuery: "motivation+empowerment+mindset+anger+management",
     bg: "#0f0000",
   },
   energetic: {
     emoji: "⚡",
     gradient: ["#F7971E", "#FFD200", "#FF6B6B"],
-    genre: "high-energy EDM & dance",
+    genre: "sports & fitness",
     quotes: [
       "Energy and persistence conquer all things. — Benjamin Franklin",
       "The higher your energy level, the more efficient your body. — Tony Robbins",
       "Life is either a daring adventure or nothing at all. — Helen Keller",
     ],
     keywords: ["energetic", "hyped", "pumped", "motivated", "alive", "wired", "fire", "lets go", "unstoppable", "powerful", "driven", "charged", "electric"],
-    spotifyQuery: "edm+dance+energy+workout",
+    podcastQuery: "fitness+sports+high+energy+workout+motivation",
     bg: "#0f0800",
   },
   dreamy: {
     emoji: "🌙",
     gradient: ["#A18CD1", "#FBC2EB", "#667eea"],
-    genre: "dream pop & ambient",
+    genre: "storytelling & fiction",
     quotes: [
       "All that we see or seem is but a dream within a dream. — Edgar Allan Poe",
       "We are such stuff as dreams are made on. — Shakespeare",
       "Those who dream by day are cognizant of many things. — Edgar Allan Poe",
     ],
     keywords: ["dreamy", "sleepy", "tired", "floating", "hazy", "ethereal", "spacey", "drifting", "nostalgic", "wistful", "pensive", "wonder", "imagine", "fantasy"],
-    spotifyQuery: "dream+pop+ambient+ethereal",
+    podcastQuery: "storytelling+fiction+fantasy+narrative+dreams",
     bg: "#0a0515",
   },
   focused: {
     emoji: "🎯",
     gradient: ["#2C3E50", "#3498DB", "#1ABC9C"],
-    genre: "deep focus & instrumental",
+    genre: "educational & productivity",
     quotes: [
       "Concentrate all your thoughts upon the work at hand. — Alexander Graham Bell",
       "Where focus goes, energy flows. — Tony Robbins",
       "The successful warrior is the average man, with laser-like focus. — Bruce Lee",
     ],
     keywords: ["focused", "productive", "working", "studying", "grind", "hustle", "determined", "locked in", "flow", "concentration", "discipline", "sharp"],
-    spotifyQuery: "deep+focus+study+instrumental+concentration",
+    podcastQuery: "productivity+education+learning+deep+work",
     bg: "#020a0f",
   },
   romantic: {
     emoji: "🌹",
     gradient: ["#ee9ca7", "#ffdde1", "#E8CBC0"],
-    genre: "romantic R&B & soul",
+    genre: "love & relationships",
     quotes: [
       "Whatever our souls are made of, his and mine are the same. — Emily Brontë",
       "I have waited for this opportunity for more than half a century. — Gabriel García Márquez",
       "Love is composed of a single soul inhabiting two bodies. — Aristotle",
     ],
     keywords: ["romantic", "love", "crush", "butterflies", "date", "heart", "passion", "desire", "smitten", "infatuated", "tender", "affection", "intimate"],
-    spotifyQuery: "romantic+rnb+soul+love+songs",
+    podcastQuery: "love+relationships+romance+dating",
     bg: "#0f0508",
   },
 };
@@ -228,8 +228,8 @@ function ResultCard({ mood, onReset }) {
     return () => clearTimeout(t);
   }, []);
 
-  const spotifyUrl = `https://open.spotify.com/search/${encodeURIComponent(data.spotifyQuery)}`;
-  const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(data.genre + " playlist")}`;
+  const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(data.podcastQuery + " podcast")}`;
+  const applePodcastsUrl = `https://podcasts.apple.com/search?term=${encodeURIComponent(data.podcastQuery)}`;
 
   return (
     <div
@@ -297,7 +297,7 @@ function ResultCard({ mood, onReset }) {
 
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
         <a
-          href={spotifyUrl}
+          href={youtubeUrl}
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -327,12 +327,12 @@ function ResultCard({ mood, onReset }) {
           }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
           </svg>
-          Spotify
+          YouTube
         </a>
         <a
-          href={youtubeUrl}
+          href={applePodcastsUrl}
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -362,9 +362,9 @@ function ResultCard({ mood, onReset }) {
           }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+            <path d="M5.34 0A5.328 5.328 0 0 0 0 5.34v13.32A5.328 5.328 0 0 0 5.34 24h13.32A5.328 5.328 0 0 0 24 18.66V5.34A5.328 5.328 0 0 0 18.66 0zm6.007 3.12c2.838 0 5.13 2.292 5.13 5.13a5.135 5.135 0 0 1-3.04 4.664c.028.13.054.261.074.395.122.84.088 1.74-.104 2.583-.193.844-.534 1.605-1.007 2.25-.398.543-.867.982-1.39 1.304-.284.175-.575.311-.873.405l-.01.003c-.234.072-.472.107-.71.107-.237 0-.474-.035-.707-.107l-.01-.003c-.3-.094-.59-.23-.876-.406a4.86 4.86 0 0 1-1.386-1.302c-.474-.645-.816-1.407-1.01-2.252-.192-.842-.225-1.742-.103-2.583.02-.134.046-.265.074-.395A5.135 5.135 0 0 1 6.218 8.25c0-2.838 2.291-5.13 5.13-5.13zm0 1.44a3.69 3.69 0 0 0-3.69 3.69 3.69 3.69 0 0 0 2.4 3.465c.15-.29.336-.56.555-.8a2.117 2.117 0 0 1-.497-1.365 2.12 2.12 0 0 1 2.12-2.12 2.12 2.12 0 0 1 2.12 2.12c0 .508-.18.976-.48 1.343.22.24.407.512.558.803a3.69 3.69 0 0 0 2.404-3.446 3.69 3.69 0 0 0-3.49-3.69zm.13 5.43c-.504 0-.908.405-.908.91a.91.91 0 0 0 .908.909.91.91 0 0 0 .91-.91.91.91 0 0 0-.91-.908zm-.02 2.43c-.24 0-.48.03-.713.085-.43.102-.82.3-1.143.575-.456.386-.782.924-.927 1.528-.145.604-.12 1.26.075 1.87.193.61.558 1.15 1.034 1.524.4.315.865.5 1.35.514h.006c.484-.014.948-.2 1.348-.514.476-.374.84-.915 1.033-1.525.196-.61.22-1.265.076-1.87-.145-.603-.47-1.14-.927-1.527a2.652 2.652 0 0 0-1.21-.576 2.72 2.72 0 0 0-.001 0z" />
           </svg>
-          YouTube
+          Apple Podcasts
         </a>
       </div>
 
@@ -580,7 +580,7 @@ export default function VibeCheck() {
               color: "rgba(255,255,255,0.25)",
             }}
           >
-            mood → music
+            mood → podcasts
           </p>
         </div>
 

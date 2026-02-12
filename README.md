@@ -1,6 +1,6 @@
-# 🎵 Vibe Check — Mood to Music
+# 🎵 Vibe Check — Mood to Podcasts
 
-Type how you're feeling and get matched with the perfect music vibe, complete with immersive visuals, curated quotes, and direct Spotify/YouTube links.
+Type how you're feeling and get matched with the perfect podcasts, complete with immersive visuals, curated quotes, and direct Spotify/YouTube links.
 
 ## Quick Start (Local)
 
