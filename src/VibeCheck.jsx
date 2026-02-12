@@ -12,6 +12,7 @@ const MOODS = {
     ],
     keywords: ["happy", "joy", "excited", "great", "amazing", "wonderful", "fantastic", "awesome", "love", "blessed", "grateful", "elated", "thrilled", "euphoric", "cheerful", "delighted"],
     podcastQuery: "comedy+feel+good+happiness",
+    girlieQuery: "comedy+happiness+fun+girls+bffs+besties",
     bg: "#1a0a00",
   },
   chill: {
@@ -25,6 +26,7 @@ const MOODS = {
     ],
     keywords: ["chill", "relax", "calm", "peaceful", "serene", "mellow", "easy", "laid back", "content", "comfortable", "cozy", "zen", "tranquil", "soothing"],
     podcastQuery: "mindfulness+meditation+calm+relaxation",
+    girlieQuery: "self+care+wellness+cozy+girls+soft+life",
     bg: "#000a0f",
   },
   sad: {
@@ -38,6 +40,7 @@ const MOODS = {
     ],
     keywords: ["sad", "down", "depressed", "blue", "lonely", "heartbroken", "miss", "cry", "tears", "gloomy", "melancholy", "grief", "sorrow", "hurt", "lost", "empty"],
     podcastQuery: "mental+health+healing+comfort+grief",
+    girlieQuery: "healing+heartbreak+comfort+women+sisterhood+therapy",
     bg: "#050810",
   },
   angry: {
@@ -51,6 +54,7 @@ const MOODS = {
     ],
     keywords: ["angry", "mad", "furious", "rage", "frustrated", "annoyed", "irritated", "pissed", "hate", "livid", "fuming", "outraged", "bitter", "hostile"],
     podcastQuery: "motivation+empowerment+mindset+anger+management",
+    girlieQuery: "female+empowerment+women+motivation+slay+boss",
     bg: "#0f0000",
   },
   energetic: {
@@ -64,6 +68,7 @@ const MOODS = {
     ],
     keywords: ["energetic", "hyped", "pumped", "motivated", "alive", "wired", "fire", "lets go", "unstoppable", "powerful", "driven", "charged", "electric"],
     podcastQuery: "fitness+sports+high+energy+workout+motivation",
+    girlieQuery: "girls+fitness+workout+energy+slay+glow+up+hot+girl+walk",
     bg: "#0f0800",
   },
   dreamy: {
@@ -77,6 +82,7 @@ const MOODS = {
     ],
     keywords: ["dreamy", "sleepy", "tired", "floating", "hazy", "ethereal", "spacey", "drifting", "nostalgic", "wistful", "pensive", "wonder", "imagine", "fantasy"],
     podcastQuery: "storytelling+fiction+fantasy+narrative+dreams",
+    girlieQuery: "aesthetic+cozy+romance+women+storytelling+cottagecore",
     bg: "#0a0515",
   },
   focused: {
@@ -90,10 +96,11 @@ const MOODS = {
     ],
     keywords: ["focused", "productive", "working", "studying", "grind", "hustle", "determined", "locked in", "flow", "concentration", "discipline", "sharp"],
     podcastQuery: "productivity+education+learning+deep+work",
+    girlieQuery: "girlboss+productivity+success+women+career+that+girl",
     bg: "#020a0f",
   },
   romantic: {
-    emoji: "🌹",
+    emoji: "💗",
     gradient: ["#ee9ca7", "#ffdde1", "#E8CBC0"],
     genre: "love & relationships",
     quotes: [
@@ -103,8 +110,31 @@ const MOODS = {
     ],
     keywords: ["romantic", "love", "crush", "butterflies", "date", "heart", "passion", "desire", "smitten", "infatuated", "tender", "affection", "intimate"],
     podcastQuery: "love+relationships+romance+dating",
+    girlieQuery: "dating+love+romance+relationships+women+red+flags",
     bg: "#0f0508",
   },
+};
+
+const lightBgMap = {
+  happy: "#fff8e7",
+  chill: "#e8f7ff",
+  sad: "#edf0f7",
+  angry: "#fff0f0",
+  energetic: "#fff9e8",
+  dreamy: "#f5f0ff",
+  focused: "#e8f4f7",
+  romantic: "#fff0f3",
+};
+
+const girlieBgMap = {
+  happy: "#fff0e8",
+  chill: "#f8eeff",
+  sad: "#eeeaff",
+  angry: "#ffe8ee",
+  energetic: "#fff0e0",
+  dreamy: "#f8e8ff",
+  focused: "#e8f8f0",
+  romantic: "#ffe0ee",
 };
 
 function detectMood(text) {
@@ -126,14 +156,14 @@ function detectMood(text) {
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-function MoodStreak({ streak }) {
+function MoodStreak({ streak, theme, getMood }) {
   const today = new Date().getDay();
   return (
     <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 20, flexWrap: "wrap" }}>
       {Array.from({ length: 7 }).map((_, i) => {
         const dayIndex = (today - 6 + i + 7) % 7;
         const entry = streak[i];
-        const moodData = entry ? MOODS[entry] : null;
+        const moodData = entry ? getMood(entry) : null;
         const isToday = i === 6;
         return (
           <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
@@ -144,8 +174,8 @@ function MoodStreak({ streak }) {
                 borderRadius: "50%",
                 background: moodData
                   ? `linear-gradient(135deg, ${moodData.gradient[0]}, ${moodData.gradient[2]})`
-                  : "rgba(255,255,255,0.06)",
-                border: isToday ? "2px solid rgba(255,255,255,0.5)" : "2px solid transparent",
+                  : theme.surface06,
+                border: isToday ? `2px solid ${theme.border50}` : "2px solid transparent",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -159,7 +189,7 @@ function MoodStreak({ streak }) {
               style={{
                 fontSize: 10,
                 fontFamily: "'JetBrains Mono', monospace",
-                color: isToday ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.3)",
+                color: isToday ? theme.text80 : theme.text30,
                 textTransform: "uppercase",
                 letterSpacing: 1,
               }}
@@ -218,8 +248,8 @@ function FloatingParticles({ gradient, active }) {
   );
 }
 
-function ResultCard({ mood, onReset }) {
-  const data = MOODS[mood];
+function ResultCard({ mood, onReset, theme, getMood }) {
+  const data = getMood(mood);
   const [quote] = useState(() => data.quotes[Math.floor(Math.random() * data.quotes.length)]);
   const [visible, setVisible] = useState(false);
 
@@ -228,8 +258,9 @@ function ResultCard({ mood, onReset }) {
     return () => clearTimeout(t);
   }, []);
 
-  const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(data.podcastQuery + " podcast")}`;
-  const applePodcastsUrl = `https://podcasts.apple.com/search?term=${encodeURIComponent(data.podcastQuery)}`;
+  const query = theme.isGirlie && data.girlieQuery ? data.girlieQuery : data.podcastQuery;
+  const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query + " podcast")}`;
+  const applePodcastsUrl = `https://podcasts.apple.com/search?term=${encodeURIComponent(query)}`;
 
   return (
     <div
@@ -271,7 +302,7 @@ function ResultCard({ mood, onReset }) {
             fontSize: 11,
             letterSpacing: 3,
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.35)",
+            color: theme.text35,
           }}
         >
           {data.genre}
@@ -283,13 +314,13 @@ function ResultCard({ mood, onReset }) {
           fontFamily: "'Playfair Display', Georgia, serif",
           fontSize: "clamp(14px, 2.5vw, 17px)",
           lineHeight: 1.7,
-          color: "rgba(255,255,255,0.55)",
+          color: theme.text55,
           textAlign: "center",
           fontStyle: "italic",
           maxWidth: 380,
           padding: "16px 0",
-          borderTop: "1px solid rgba(255,255,255,0.06)",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          borderTop: `1px solid ${theme.border06}`,
+          borderBottom: `1px solid ${theme.border06}`,
         }}
       >
         "{quote}"
@@ -341,9 +372,9 @@ function ResultCard({ mood, onReset }) {
             gap: 8,
             padding: "12px 24px",
             borderRadius: 50,
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "rgba(255,255,255,0.6)",
+            background: theme.surface04,
+            border: `1px solid ${theme.border10}`,
+            color: theme.text60,
             textDecoration: "none",
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: 12,
@@ -353,11 +384,11 @@ function ResultCard({ mood, onReset }) {
             cursor: "pointer",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+            e.currentTarget.style.background = theme.border08;
             e.currentTarget.style.transform = "scale(1.05)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+            e.currentTarget.style.background = theme.surface04;
             e.currentTarget.style.transform = "scale(1)";
           }}
         >
@@ -375,8 +406,8 @@ function ResultCard({ mood, onReset }) {
           padding: "10px 20px",
           borderRadius: 50,
           background: "transparent",
-          border: "1px solid rgba(255,255,255,0.1)",
-          color: "rgba(255,255,255,0.3)",
+          border: `1px solid ${theme.border10}`,
+          color: theme.text30,
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: 11,
           letterSpacing: 2,
@@ -385,12 +416,12 @@ function ResultCard({ mood, onReset }) {
           transition: "all 0.3s ease",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)";
-          e.currentTarget.style.color = "rgba(255,255,255,0.6)";
+          e.currentTarget.style.borderColor = theme.border30;
+          e.currentTarget.style.color = theme.text60;
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
-          e.currentTarget.style.color = "rgba(255,255,255,0.3)";
+          e.currentTarget.style.borderColor = theme.border10;
+          e.currentTarget.style.color = theme.text30;
         }}
       >
         Check again
@@ -399,10 +430,10 @@ function ResultCard({ mood, onReset }) {
   );
 }
 
-function EmojiPicker({ onPick }) {
-  const emojis = Object.entries(MOODS).map(([key, val]) => ({
+function EmojiPicker({ onPick, theme, getMood }) {
+  const emojis = Object.keys(MOODS).map((key) => ({
     mood: key,
-    emoji: val.emoji,
+    emoji: getMood(key).emoji,
     label: key,
   }));
 
@@ -417,8 +448,8 @@ function EmojiPicker({ onPick }) {
             width: 48,
             height: 48,
             borderRadius: "50%",
-            border: "1px solid rgba(255,255,255,0.08)",
-            background: "rgba(255,255,255,0.03)",
+            border: `1px solid ${theme.border08}`,
+            background: theme.surface03,
             fontSize: 22,
             cursor: "pointer",
             transition: "all 0.3s ease",
@@ -427,14 +458,14 @@ function EmojiPicker({ onPick }) {
             justifyContent: "center",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+            e.currentTarget.style.background = theme.surface10;
             e.currentTarget.style.transform = "scale(1.2)";
-            e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)";
+            e.currentTarget.style.borderColor = theme.border20;
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+            e.currentTarget.style.background = theme.surface03;
             e.currentTarget.style.transform = "scale(1)";
-            e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+            e.currentTarget.style.borderColor = theme.border08;
           }}
         >
           {emoji}
@@ -444,15 +475,335 @@ function EmojiPicker({ onPick }) {
   );
 }
 
+function SettingsPanel({ open, onClose, theme, customMoods, setCustomMoods, accentColor, setAccentColor }) {
+  const [editingEmojiFor, setEditingEmojiFor] = useState(null);
+
+  const updateEmoji = (moodKey, emoji) => {
+    setCustomMoods((prev) => ({
+      ...prev,
+      [moodKey]: { ...prev[moodKey], emoji: emoji || MOODS[moodKey].emoji },
+    }));
+  };
+
+  const updateGradient = (moodKey, index, color) => {
+    setCustomMoods((prev) => {
+      const gradient = [...prev[moodKey].gradient];
+      gradient[index] = color;
+      return { ...prev, [moodKey]: { ...prev[moodKey], gradient } };
+    });
+  };
+
+  const resetMood = (moodKey) => {
+    setCustomMoods((prev) => ({
+      ...prev,
+      [moodKey]: { emoji: MOODS[moodKey].emoji, gradient: [...MOODS[moodKey].gradient] },
+    }));
+  };
+
+  const resetAll = () => {
+    setCustomMoods(
+      Object.fromEntries(
+        Object.entries(MOODS).map(([k, v]) => [k, { emoji: v.emoji, gradient: [...v.gradient] }])
+      )
+    );
+    setAccentColor("#ffffff");
+  };
+
+  return (
+    <>
+      {open && (
+        <div
+          onClick={onClose}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.4)",
+            zIndex: 19,
+          }}
+        />
+      )}
+
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          right: 0,
+          height: "100vh",
+          width: "min(360px, 90vw)",
+          background: theme.panelBg,
+          borderLeft: `1px solid ${theme.border10}`,
+          transform: open ? "translateX(0)" : "translateX(100%)",
+          transition: "transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
+          zIndex: 20,
+          overflowY: "auto",
+          padding: "24px 20px",
+          boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
+          gap: 28,
+          fontFamily: "'JetBrains Mono', monospace",
+        }}
+      >
+        {/* Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontSize: 13, letterSpacing: 3, textTransform: "uppercase", color: theme.text60 }}>
+            Settings
+          </span>
+          <button
+            onClick={onClose}
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              border: `1px solid ${theme.border10}`,
+              background: "transparent",
+              color: theme.text60,
+              cursor: "pointer",
+              fontSize: 16,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Global accent */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <span style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: theme.text35 }}>
+            Global Accent
+          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <input
+              type="color"
+              value={accentColor}
+              onChange={(e) => setAccentColor(e.target.value)}
+              style={{ width: 40, height: 40, border: "none", borderRadius: 8, cursor: "pointer", padding: 2, background: "none" }}
+            />
+            <span style={{ fontSize: 11, color: theme.text30 }}>{accentColor}</span>
+          </div>
+        </div>
+
+        {/* Per-mood rows */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <span style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: theme.text35 }}>
+            Mood Customization
+          </span>
+          {Object.keys(MOODS).map((moodKey) => (
+            <div
+              key={moodKey}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+                padding: "12px 14px",
+                borderRadius: 12,
+                border: `1px solid ${theme.border08}`,
+                background: theme.surface03,
+              }}
+            >
+              {/* Row: emoji + name + reset */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  {editingEmojiFor === moodKey ? (
+                    <input
+                      type="text"
+                      maxLength={2}
+                      defaultValue={customMoods[moodKey].emoji}
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          updateEmoji(moodKey, e.target.value);
+                          setEditingEmojiFor(null);
+                        }
+                        if (e.key === "Escape") setEditingEmojiFor(null);
+                      }}
+                      onBlur={(e) => {
+                        updateEmoji(moodKey, e.target.value);
+                        setEditingEmojiFor(null);
+                      }}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        textAlign: "center",
+                        fontSize: 18,
+                        borderRadius: 8,
+                        border: `1px solid ${theme.border20}`,
+                        background: theme.surface10,
+                        color: theme.text85,
+                        outline: "none",
+                      }}
+                    />
+                  ) : (
+                    <button
+                      onClick={() => setEditingEmojiFor(moodKey)}
+                      title="Click to change emoji"
+                      style={{
+                        width: 40,
+                        height: 40,
+                        fontSize: 20,
+                        borderRadius: 8,
+                        border: `1px solid ${theme.border08}`,
+                        background: theme.surface05,
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {customMoods[moodKey].emoji}
+                    </button>
+                  )}
+                  <span style={{ fontSize: 11, letterSpacing: 1, textTransform: "capitalize", color: theme.text60 }}>
+                    {moodKey}
+                  </span>
+                </div>
+                <button
+                  onClick={() => resetMood(moodKey)}
+                  title="Reset to default"
+                  style={{
+                    fontSize: 14,
+                    background: "transparent",
+                    border: "none",
+                    color: theme.text30,
+                    cursor: "pointer",
+                    padding: "4px 6px",
+                    borderRadius: 4,
+                  }}
+                >
+                  ↺
+                </button>
+              </div>
+
+              {/* Gradient row */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 9, letterSpacing: 1, textTransform: "uppercase", color: theme.text25, flexShrink: 0 }}>
+                  Gradient
+                </span>
+                {customMoods[moodKey].gradient.map((color, i) => (
+                  <input
+                    key={i}
+                    type="color"
+                    value={color}
+                    onChange={(e) => updateGradient(moodKey, i, e.target.value)}
+                    style={{ width: 32, height: 32, border: "none", borderRadius: 6, cursor: "pointer", padding: 2, background: "none" }}
+                  />
+                ))}
+                <div
+                  style={{
+                    flex: 1,
+                    height: 8,
+                    borderRadius: 4,
+                    marginLeft: 4,
+                    background: `linear-gradient(90deg, ${customMoods[moodKey].gradient[0]}, ${customMoods[moodKey].gradient[1]}, ${customMoods[moodKey].gradient[2]})`,
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Reset all */}
+        <button
+          onClick={resetAll}
+          style={{
+            padding: "12px 0",
+            borderRadius: 10,
+            border: `1px solid ${theme.border10}`,
+            background: "transparent",
+            color: theme.text30,
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 11,
+            letterSpacing: 2,
+            textTransform: "uppercase",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = theme.border30;
+            e.currentTarget.style.color = theme.text60;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = theme.border10;
+            e.currentTarget.style.color = theme.text30;
+          }}
+        >
+          Reset all to defaults
+        </button>
+      </div>
+    </>
+  );
+}
+
 export default function VibeCheck() {
   const [inputText, setInputText] = useState("");
   const [currentMood, setCurrentMood] = useState(null);
   const [streak, setStreak] = useState(() => Array(7).fill(null));
-  const [phase, setPhase] = useState("input"); // input | analyzing | result
+  const [phase, setPhase] = useState("input");
   const inputRef = useRef(null);
 
+  const [isDark, setIsDark] = useState(true);
+  const [isGirlie, setIsGirlie] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [accentColor, setAccentColor] = useState("#ffffff");
+
+  const mode = isGirlie ? "girlie" : isDark ? "dark" : "light";
+  const [customMoods, setCustomMoods] = useState(() =>
+    Object.fromEntries(
+      Object.entries(MOODS).map(([k, v]) => [k, { emoji: v.emoji, gradient: [...v.gradient] }])
+    )
+  );
+
+  const getMood = useCallback(
+    (key) => ({ ...MOODS[key], emoji: customMoods[key].emoji, gradient: customMoods[key].gradient }),
+    [customMoods]
+  );
+
+  const t = (dark, light, girlie) => mode === "dark" ? dark : mode === "light" ? light : girlie;
+  const theme = {
+    isDark,
+    isGirlie,
+    mode,
+    text90: t("rgba(255,255,255,0.90)", "rgba(0,0,0,0.90)",     "rgba(80,0,40,0.90)"),
+    text85: t("rgba(255,255,255,0.85)", "rgba(0,0,0,0.85)",     "rgba(80,0,40,0.85)"),
+    text80: t("rgba(255,255,255,0.80)", "rgba(0,0,0,0.80)",     "rgba(80,0,40,0.80)"),
+    text70: t("rgba(255,255,255,0.70)", "rgba(0,0,0,0.70)",     "rgba(100,0,50,0.70)"),
+    text60: t("rgba(255,255,255,0.60)", "rgba(0,0,0,0.60)",     "rgba(120,20,60,0.60)"),
+    text55: t("rgba(255,255,255,0.55)", "rgba(0,0,0,0.55)",     "rgba(120,20,60,0.55)"),
+    text50: t("rgba(255,255,255,0.50)", "rgba(0,0,0,0.50)",     "rgba(140,30,70,0.50)"),
+    text35: t("rgba(255,255,255,0.35)", "rgba(0,0,0,0.35)",     "rgba(160,40,80,0.35)"),
+    text30: t("rgba(255,255,255,0.30)", "rgba(0,0,0,0.30)",     "rgba(160,40,80,0.30)"),
+    text25: t("rgba(255,255,255,0.25)", "rgba(0,0,0,0.25)",     "rgba(180,60,100,0.25)"),
+    text20: t("rgba(255,255,255,0.20)", "rgba(0,0,0,0.20)",     "rgba(180,60,100,0.20)"),
+    text18: t("rgba(255,255,255,0.18)", "rgba(0,0,0,0.18)",     "rgba(180,60,100,0.18)"),
+    text15: t("rgba(255,255,255,0.15)", "rgba(0,0,0,0.15)",     "rgba(200,80,120,0.15)"),
+    surface03: t("rgba(255,255,255,0.03)", "rgba(0,0,0,0.03)", "rgba(255,150,180,0.06)"),
+    surface04: t("rgba(255,255,255,0.04)", "rgba(0,0,0,0.04)", "rgba(255,150,180,0.09)"),
+    surface05: t("rgba(255,255,255,0.05)", "rgba(0,0,0,0.05)", "rgba(255,150,180,0.12)"),
+    surface06: t("rgba(255,255,255,0.06)", "rgba(0,0,0,0.06)", "rgba(255,150,180,0.15)"),
+    surface10: t("rgba(255,255,255,0.10)", "rgba(0,0,0,0.10)", "rgba(255,105,160,0.15)"),
+    surface20: t("rgba(255,255,255,0.20)", "rgba(0,0,0,0.20)", "rgba(255,105,160,0.25)"),
+    border06: t("rgba(255,255,255,0.06)", "rgba(0,0,0,0.06)",  "rgba(220,80,130,0.12)"),
+    border08: t("rgba(255,255,255,0.08)", "rgba(0,0,0,0.08)",  "rgba(220,80,130,0.18)"),
+    border10: t("rgba(255,255,255,0.10)", "rgba(0,0,0,0.10)",  "rgba(220,80,130,0.22)"),
+    border20: t("rgba(255,255,255,0.20)", "rgba(0,0,0,0.20)",  "rgba(220,80,130,0.35)"),
+    border30: t("rgba(255,255,255,0.30)", "rgba(0,0,0,0.30)",  "rgba(220,80,130,0.50)"),
+    border50: t("rgba(255,255,255,0.50)", "rgba(0,0,0,0.50)",  "rgba(220,80,130,0.70)"),
+    panelBg: t("#0e0e10", "#fafafa", "#fff0f5"),
+    pageBg: (moodKey) => {
+      if (!moodKey) return t("#060608", "#f5f5f7", "#fce4ec");
+      if (mode === "dark") return MOODS[moodKey].bg;
+      if (mode === "light") return lightBgMap[moodKey];
+      return girlieBgMap[moodKey];
+    },
+    selection: t("rgba(255,255,255,0.15)", "rgba(0,0,0,0.15)", "rgba(255,105,160,0.20)"),
+    placeholder: t("rgba(255,255,255,0.20)", "rgba(0,0,0,0.20)", "rgba(180,60,100,0.30)"),
+    accent: accentColor,
+  };
+
   const activeGradient = currentMood
-    ? MOODS[currentMood].gradient
+    ? getMood(currentMood).gradient
     : ["#333", "#222", "#111"];
 
   const handleSubmit = useCallback(
@@ -489,7 +840,7 @@ export default function VibeCheck() {
     <div
       style={{
         minHeight: "100vh",
-        background: currentMood ? MOODS[currentMood].bg : "#060608",
+        background: theme.pageBg(currentMood),
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -498,6 +849,8 @@ export default function VibeCheck() {
         overflow: "hidden",
         transition: "background 1.5s ease",
         padding: 20,
+        "--selection-bg": theme.selection,
+        "--placeholder-color": theme.placeholder,
       }}
     >
       <style>{`
@@ -528,13 +881,97 @@ export default function VibeCheck() {
         }
 
         ::selection {
-          background: rgba(255,255,255,0.15);
+          background: var(--selection-bg);
         }
 
         input::placeholder {
-          color: rgba(255,255,255,0.2);
+          color: var(--placeholder-color);
         }
       `}</style>
+
+      {/* Top-right controls */}
+      <div
+        style={{
+          position: "fixed",
+          top: 20,
+          right: 20,
+          zIndex: 10,
+          display: "flex",
+          gap: 10,
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            borderRadius: 50,
+            border: `1px solid ${theme.border20}`,
+            background: theme.surface05,
+            overflow: "hidden",
+          }}
+        >
+          {[
+            { key: "dark",   icon: "🌙", label: "Dark"   },
+            { key: "light",  icon: "☀️",  label: "Light"  },
+            { key: "girlie", icon: "🎀", label: "Girlie" },
+          ].map(({ key, icon, label }, i, arr) => {
+            const active = mode === key;
+            return (
+              <button
+                key={key}
+                onClick={() => {
+                  if (key === "girlie") { setIsGirlie(true); }
+                  else { setIsGirlie(false); setIsDark(key === "dark"); }
+                }}
+                title={label + " mode"}
+                style={{
+                  padding: "8px 14px",
+                  border: "none",
+                  borderRight: i < arr.length - 1 ? `1px solid ${theme.border10}` : "none",
+                  background: active
+                    ? key === "girlie" ? "rgba(255,133,162,0.28)" : theme.surface20
+                    : "transparent",
+                  color: active
+                    ? key === "girlie" ? "#FF85A2" : theme.text80
+                    : theme.text35,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                  transition: "all 0.2s ease",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 11,
+                  letterSpacing: 1,
+                  textTransform: "uppercase",
+                }}
+              >
+                <span style={{ fontSize: 14 }}>{icon}</span>
+                <span>{label}</span>
+              </button>
+            );
+          })}
+        </div>
+        <button
+          onClick={() => setSettingsOpen((o) => !o)}
+          title="Customize"
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            border: `1px solid ${theme.border20}`,
+            background: theme.surface10,
+            color: theme.text70,
+            cursor: "pointer",
+            fontSize: 18,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "all 0.3s ease",
+          }}
+        >
+          ⚙️
+        </button>
+      </div>
 
       <GlowOrb gradient={activeGradient} active={!!currentMood} />
       <FloatingParticles gradient={activeGradient} active={phase === "result"} />
@@ -563,7 +1000,7 @@ export default function VibeCheck() {
               fontFamily: "'Playfair Display', Georgia, serif",
               fontSize: "clamp(36px, 7vw, 56px)",
               fontWeight: 700,
-              color: "rgba(255,255,255,0.9)",
+              color: theme.text90,
               letterSpacing: -1,
               marginBottom: 8,
               lineHeight: 1.1,
@@ -577,7 +1014,7 @@ export default function VibeCheck() {
               fontSize: 11,
               letterSpacing: 4,
               textTransform: "uppercase",
-              color: "rgba(255,255,255,0.25)",
+              color: theme.text25,
             }}
           >
             mood → podcasts
@@ -614,9 +1051,9 @@ export default function VibeCheck() {
                   width: "100%",
                   padding: "18px 24px",
                   borderRadius: 16,
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  background: "rgba(255,255,255,0.03)",
-                  color: "rgba(255,255,255,0.85)",
+                  border: `1px solid ${theme.border08}`,
+                  background: theme.surface03,
+                  color: theme.text85,
                   fontFamily: "'Playfair Display', Georgia, serif",
                   fontSize: 17,
                   outline: "none",
@@ -624,12 +1061,12 @@ export default function VibeCheck() {
                   backdropFilter: "blur(20px)",
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = "rgba(255,255,255,0.2)";
-                  e.target.style.background = "rgba(255,255,255,0.05)";
+                  e.target.style.borderColor = theme.border20;
+                  e.target.style.background = theme.surface05;
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = "rgba(255,255,255,0.08)";
-                  e.target.style.background = "rgba(255,255,255,0.03)";
+                  e.target.style.borderColor = theme.border08;
+                  e.target.style.background = theme.surface03;
                 }}
               />
               {inputText.trim() && (
@@ -644,8 +1081,8 @@ export default function VibeCheck() {
                     height: 36,
                     borderRadius: "50%",
                     border: "none",
-                    background: "rgba(255,255,255,0.1)",
-                    color: "rgba(255,255,255,0.7)",
+                    background: theme.surface10,
+                    color: theme.text70,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
@@ -654,10 +1091,10 @@ export default function VibeCheck() {
                     fontSize: 16,
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "rgba(255,255,255,0.2)";
+                    e.currentTarget.style.background = theme.surface20;
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+                    e.currentTarget.style.background = theme.surface10;
                   }}
                 >
                   →
@@ -666,22 +1103,22 @@ export default function VibeCheck() {
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 16, width: "100%" }}>
-              <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
+              <div style={{ flex: 1, height: 1, background: theme.border06 }} />
               <span
                 style={{
                   fontFamily: "'JetBrains Mono', monospace",
                   fontSize: 10,
                   letterSpacing: 3,
-                  color: "rgba(255,255,255,0.2)",
+                  color: theme.text20,
                   textTransform: "uppercase",
                 }}
               >
                 or pick a vibe
               </span>
-              <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
+              <div style={{ flex: 1, height: 1, background: theme.border06 }} />
             </div>
 
-            <EmojiPicker onPick={(mood) => handleSubmit(mood)} />
+            <EmojiPicker onPick={(mood) => handleSubmit(mood)} theme={theme} getMood={getMood} />
           </div>
         )}
 
@@ -717,7 +1154,7 @@ export default function VibeCheck() {
                 fontSize: 12,
                 letterSpacing: 3,
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.3)",
+                color: theme.text30,
               }}
             >
               reading your vibe
@@ -727,7 +1164,7 @@ export default function VibeCheck() {
 
         {/* Result Phase */}
         {phase === "result" && currentMood && (
-          <ResultCard mood={currentMood} onReset={handleReset} />
+          <ResultCard mood={currentMood} onReset={handleReset} theme={theme} getMood={getMood} />
         )}
 
         {/* Streak */}
@@ -738,14 +1175,14 @@ export default function VibeCheck() {
             animation: "slideUp 0.8s ease-out 0.4s both",
           }}
         >
-          <MoodStreak streak={streak} />
+          <MoodStreak streak={streak} theme={theme} getMood={getMood} />
           <p
             style={{
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: 9,
               letterSpacing: 2,
               textTransform: "uppercase",
-              color: "rgba(255,255,255,0.15)",
+              color: theme.text15,
               textAlign: "center",
               marginTop: 10,
             }}
@@ -768,20 +1205,30 @@ export default function VibeCheck() {
             rel="noopener noreferrer"
             style={{
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 10,
+              fontSize: 12,
               letterSpacing: 2,
               textTransform: "uppercase",
-              color: "rgba(255,255,255,0.18)",
+              color: theme.text50,
               textDecoration: "none",
               transition: "color 0.3s ease",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.18)")}
+            onMouseEnter={(e) => (e.currentTarget.style.color = theme.text90)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = theme.text50)}
           >
             built by m. abdullah aziz
           </a>
         </div>
       </div>
+
+      <SettingsPanel
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        theme={theme}
+        customMoods={customMoods}
+        setCustomMoods={setCustomMoods}
+        accentColor={accentColor}
+        setAccentColor={setAccentColor}
+      />
     </div>
   );
 }
