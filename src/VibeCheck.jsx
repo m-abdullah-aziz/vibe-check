@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 const MOODS = {
   happy: {
-    emoji: "☀️",
+    emoji: "😊",
     gradient: ["#FFD700", "#FF6B35", "#FF1493"],
     genre: "comedy & feel-good stories",
     quotes: [
@@ -155,6 +155,7 @@ function detectMood(text) {
 }
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 
 function MoodStreak({ streak, theme, getMood }) {
   const today = new Date().getDay();
@@ -798,7 +799,7 @@ export default function VibeCheck() {
       return girlieBgMap[moodKey];
     },
     selection: t("rgba(255,255,255,0.15)", "rgba(0,0,0,0.15)", "rgba(255,105,160,0.20)"),
-    placeholder: t("rgba(255,255,255,0.20)", "rgba(0,0,0,0.20)", "rgba(180,60,100,0.30)"),
+    placeholder: t("rgba(255,255,255,0.70)", "rgba(0,0,0,0.65)", "rgba(160,20,70,0.75)"),
     accent: accentColor,
   };
 
@@ -911,7 +912,7 @@ export default function VibeCheck() {
           }}
         >
           {[
-            { key: "dark",   icon: "🦇", label: "Dark"   },
+            { key: "dark",   icon: "🌙", label: "Dark"   },
             { key: "light",  icon: "☀️",  label: "Light"  },
             { key: "girlie", icon: "🎀", label: "Girlie" },
           ].map(({ key, icon, label }, i, arr) => {
@@ -933,7 +934,7 @@ export default function VibeCheck() {
                     : "transparent",
                   color: active
                     ? key === "girlie" ? "#FF85A2" : theme.text80
-                    : theme.text35,
+                    : theme.text60,
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
