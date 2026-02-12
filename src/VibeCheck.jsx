@@ -912,7 +912,7 @@ export default function VibeCheck() {
           }}
         >
           {[
-            { key: "dark",   icon: "🌙", label: "Dark"   },
+            { key: "dark",   icon: "🦇", label: "Dark"   },
             { key: "light",  icon: "☀️",  label: "Light"  },
             { key: "girlie", icon: "🎀", label: "Girlie" },
           ].map(({ key, icon, label }, i, arr) => {
