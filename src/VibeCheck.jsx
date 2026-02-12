@@ -849,7 +849,7 @@ export default function VibeCheck() {
         position: "relative",
         overflow: "hidden",
         transition: "background 1.5s ease",
-        padding: 20,
+        padding: "72px 20px 20px",
         "--selection-bg": theme.selection,
         "--placeholder-color": theme.placeholder,
       }}
@@ -1015,7 +1015,7 @@ export default function VibeCheck() {
               fontSize: 11,
               letterSpacing: 4,
               textTransform: "uppercase",
-              color: theme.text25,
+              color: theme.text60,
             }}
           >
             mood → podcasts
@@ -1110,7 +1110,7 @@ export default function VibeCheck() {
                   fontFamily: "'JetBrains Mono', monospace",
                   fontSize: 10,
                   letterSpacing: 3,
-                  color: theme.text20,
+                  color: theme.text60,
                   textTransform: "uppercase",
                 }}
               >
@@ -1183,7 +1183,7 @@ export default function VibeCheck() {
               fontSize: "clamp(10px, 2vw, 14px)",
               letterSpacing: 2,
               textTransform: "uppercase",
-              color: theme.text15,
+              color: theme.text60,
               textAlign: "center",
               marginTop: 10,
               fontWeight: 300,
