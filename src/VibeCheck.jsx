@@ -1180,12 +1180,13 @@ export default function VibeCheck() {
           <p
             style={{
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 9,
+              fontSize: "clamp(10px, 2vw, 14px)",
               letterSpacing: 2,
               textTransform: "uppercase",
               color: theme.text15,
               textAlign: "center",
               marginTop: 10,
+              fontWeight: 300,
             }}
           >
             your week in vibes
