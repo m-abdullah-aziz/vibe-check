@@ -151,7 +151,7 @@ function detectMood(text) {
       bestMood = mood;
     }
   }
-  return bestMood || "chill";
+  return { mood: bestMood || "chill", score: bestScore };
 }
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -160,7 +160,7 @@ const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 function MoodStreak({ streak, theme, getMood }) {
   const today = new Date().getDay();
   return (
-    <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 20, flexWrap: "wrap" }}>
+    <div style={{ display: "flex", gap: "clamp(4px, 1.5vw, 8px)", justifyContent: "center", marginTop: "clamp(8px, 2vw, 20px)", flexWrap: "wrap" }}>
       {Array.from({ length: 7 }).map((_, i) => {
         const dayIndex = (today - 6 + i + 7) % 7;
         const entry = streak[i];
@@ -170,8 +170,8 @@ function MoodStreak({ streak, theme, getMood }) {
           <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
             <div
               style={{
-                width: 36,
-                height: 36,
+                width: "clamp(28px, 8vw, 36px)",
+                height: "clamp(28px, 8vw, 36px)",
                 borderRadius: "50%",
                 background: moodData
                   ? `linear-gradient(135deg, ${moodData.gradient[0]}, ${moodData.gradient[2]})`
@@ -180,7 +180,7 @@ function MoodStreak({ streak, theme, getMood }) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: 16,
+                fontSize: "clamp(12px, 3.5vw, 16px)",
                 transition: "all 0.5s ease",
               }}
             >
@@ -249,15 +249,27 @@ function FloatingParticles({ gradient, active }) {
   );
 }
 
-function ResultCard({ mood, onReset, theme, getMood }) {
+function ResultCard({ mood, onReset, theme, getMood, customMoodLabel }) {
   const data = getMood(mood);
-  const [quote] = useState(() => data.quotes[Math.floor(Math.random() * data.quotes.length)]);
   const [visible, setVisible] = useState(false);
+  const [quote, setQuote] = useState(() =>
+    mood !== "__custom__" ? data.quotes[Math.floor(Math.random() * data.quotes.length)] : ""
+  );
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 100);
     return () => clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+    if (mood !== "__custom__") return;
+    fetch("https://dummyjson.com/quotes/random")
+      .then((r) => r.json())
+      .then((d) => setQuote(`${d.quote} — ${d.author}`))
+      .catch(() => setQuote("Every experience is a teacher. — Anonymous"));
+  }, [mood]);
+
+  const displayMood = mood === "__custom__" ? customMoodLabel : mood;
 
   const query = theme.isGirlie && data.girlieQuery ? data.girlieQuery : data.podcastQuery;
   const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query + " podcast")}`;
@@ -272,13 +284,13 @@ function ResultCard({ mood, onReset, theme, getMood }) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 28,
+        gap: "clamp(10px, 2vw, 28px)",
         maxWidth: 480,
         width: "100%",
         padding: "0 20px",
       }}
     >
-      <div style={{ fontSize: 64, lineHeight: 1, filter: "drop-shadow(0 0 30px rgba(255,255,255,0.2))" }}>
+      <div style={{ fontSize: "clamp(36px, 10vw, 64px)", lineHeight: 1, filter: "drop-shadow(0 0 30px rgba(255,255,255,0.2))" }}>
         {data.emoji}
       </div>
 
@@ -295,7 +307,7 @@ function ResultCard({ mood, onReset, theme, getMood }) {
             textTransform: "capitalize",
           }}
         >
-          {mood}
+          {displayMood}
         </div>
         <div
           style={{
@@ -310,22 +322,24 @@ function ResultCard({ mood, onReset, theme, getMood }) {
         </div>
       </div>
 
-      <div
-        style={{
-          fontFamily: "'Playfair Display', Georgia, serif",
-          fontSize: "clamp(14px, 2.5vw, 17px)",
-          lineHeight: 1.7,
-          color: theme.text55,
-          textAlign: "center",
-          fontStyle: "italic",
-          maxWidth: 380,
-          padding: "16px 0",
-          borderTop: `1px solid ${theme.border06}`,
-          borderBottom: `1px solid ${theme.border06}`,
-        }}
-      >
-        "{quote}"
-      </div>
+      {mood !== "__custom__" && (
+        <div
+          style={{
+            fontFamily: "'Playfair Display', Georgia, serif",
+            fontSize: "clamp(14px, 2.5vw, 17px)",
+            lineHeight: 1.7,
+            color: theme.text55,
+            textAlign: "center",
+            fontStyle: "italic",
+            maxWidth: 380,
+            padding: "clamp(8px, 2vw, 16px) 0",
+            borderTop: `1px solid ${theme.border06}`,
+            borderBottom: `1px solid ${theme.border06}`,
+          }}
+        >
+          "{quote}"
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
         <a
@@ -746,6 +760,7 @@ export default function VibeCheck() {
 
   const [isDark, setIsDark] = useState(true);
   const [isGirlie, setIsGirlie] = useState(false);
+  const [customMoodLabel, setCustomMoodLabel] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [accentColor, setAccentColor] = useState("#ffffff");
 
@@ -757,8 +772,22 @@ export default function VibeCheck() {
   );
 
   const getMood = useCallback(
-    (key) => ({ ...MOODS[key], emoji: customMoods[key].emoji, gradient: customMoods[key].gradient }),
-    [customMoods]
+    (key) => {
+      if (key === "__custom__") {
+        const q = customMoodLabel.replace(/\s+/g, "+");
+        return {
+          emoji: "✨",
+          gradient: ["#9B59B6", "#3498DB", "#1ABC9C"],
+          genre: "curated for you",
+          quotes: ["Every experience is a teacher. — Anonymous", "Your feelings are valid. — Unknown", "This too shall pass. — Ancient Proverb"],
+          podcastQuery: q,
+          girlieQuery: q + "+women+lifestyle",
+          bg: "#080810",
+        };
+      }
+      return { ...MOODS[key], emoji: customMoods[key].emoji, gradient: customMoods[key].gradient };
+    },
+    [customMoods, customMoodLabel]
   );
 
   const t = (dark, light, girlie) => mode === "dark" ? dark : mode === "light" ? light : girlie;
@@ -794,6 +823,7 @@ export default function VibeCheck() {
     panelBg: t("#0e0e10", "#fafafa", "#fff0f5"),
     pageBg: (moodKey) => {
       if (!moodKey) return t("#060608", "#f5f5f7", "#fce4ec");
+      if (moodKey === "__custom__") return t("#080810", "#f0eeff", "#fce0f0");
       if (mode === "dark") return MOODS[moodKey].bg;
       if (mode === "light") return lightBgMap[moodKey];
       return girlieBgMap[moodKey];
@@ -809,7 +839,18 @@ export default function VibeCheck() {
 
   const handleSubmit = useCallback(
     (moodOverride) => {
-      const mood = moodOverride || detectMood(inputText);
+      let mood;
+      if (moodOverride) {
+        mood = moodOverride;
+      } else {
+        const { mood: detected, score } = detectMood(inputText);
+        if (score === 0 && inputText.trim()) {
+          setCustomMoodLabel(inputText.trim());
+          mood = "__custom__";
+        } else {
+          mood = detected;
+        }
+      }
       setCurrentMood(mood);
       setPhase("analyzing");
 
@@ -840,14 +881,15 @@ export default function VibeCheck() {
   return (
     <div
       style={{
-        minHeight: "100vh",
+        minHeight: "100svh",
         background: theme.pageBg(currentMood),
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
-        overflow: "hidden",
+        overflowX: "hidden",
+        overflowY: "auto",
         transition: "background 1.5s ease",
         padding: "72px 20px 20px",
         "--selection-bg": theme.selection,
@@ -858,6 +900,7 @@ export default function VibeCheck() {
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
 
         @keyframes floatParticle {
           0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.15; }
@@ -984,7 +1027,7 @@ export default function VibeCheck() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 32,
+          gap: "clamp(14px, 2.5vw, 32px)",
           width: "100%",
           maxWidth: 520,
         }}
@@ -999,7 +1042,7 @@ export default function VibeCheck() {
           <h1
             style={{
               fontFamily: "'Playfair Display', Georgia, serif",
-              fontSize: "clamp(36px, 7vw, 56px)",
+              fontSize: "clamp(22px, 6vw, 56px)",
               fontWeight: 700,
               color: theme.text90,
               letterSpacing: -1,
@@ -1165,7 +1208,7 @@ export default function VibeCheck() {
 
         {/* Result Phase */}
         {phase === "result" && currentMood && (
-          <ResultCard mood={currentMood} onReset={handleReset} theme={theme} getMood={getMood} />
+          <ResultCard mood={currentMood} onReset={handleReset} theme={theme} getMood={getMood} customMoodLabel={customMoodLabel} />
         )}
 
         {/* Streak */}
