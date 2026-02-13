@@ -252,22 +252,26 @@ function FloatingParticles({ gradient, active }) {
 function ResultCard({ mood, onReset, theme, getMood, customMoodLabel }) {
   const data = getMood(mood);
   const [visible, setVisible] = useState(false);
-  const [quote, setQuote] = useState(() =>
-    mood !== "__custom__" ? data.quotes[Math.floor(Math.random() * data.quotes.length)] : ""
+  const customQuotes = [
+    "You're exactly where you need to be.",
+    "Trust the process.",
+    "Your energy speaks before you do.",
+    "Stay curious, stay kind.",
+    "Main character energy.",
+    "This feeling? It's yours. Own it.",
+    "Good things are coming.",
+    "You're doing better than you think.",
+  ];
+  const [quote] = useState(() =>
+    mood !== "__custom__"
+      ? data.quotes[Math.floor(Math.random() * data.quotes.length)]
+      : customQuotes[Math.floor(Math.random() * customQuotes.length)]
   );
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 100);
     return () => clearTimeout(t);
   }, []);
-
-  useEffect(() => {
-    if (mood !== "__custom__") return;
-    fetch("https://dummyjson.com/quotes/random")
-      .then((r) => r.json())
-      .then((d) => setQuote(`${d.quote} — ${d.author}`))
-      .catch(() => setQuote("Every experience is a teacher. — Anonymous"));
-  }, [mood]);
 
   const displayMood = mood === "__custom__" ? customMoodLabel : mood;
 
@@ -322,24 +326,22 @@ function ResultCard({ mood, onReset, theme, getMood, customMoodLabel }) {
         </div>
       </div>
 
-      {mood !== "__custom__" && (
-        <div
-          style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontSize: "clamp(14px, 2.5vw, 17px)",
-            lineHeight: 1.7,
-            color: theme.text55,
-            textAlign: "center",
-            fontStyle: "italic",
-            maxWidth: 380,
-            padding: "clamp(8px, 2vw, 16px) 0",
-            borderTop: `1px solid ${theme.border06}`,
-            borderBottom: `1px solid ${theme.border06}`,
-          }}
-        >
-          "{quote}"
-        </div>
-      )}
+      <div
+        style={{
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: "clamp(14px, 2.5vw, 17px)",
+          lineHeight: 1.7,
+          color: theme.text55,
+          textAlign: "center",
+          fontStyle: "italic",
+          maxWidth: 380,
+          padding: "clamp(8px, 2vw, 16px) 0",
+          borderTop: `1px solid ${theme.border06}`,
+          borderBottom: `1px solid ${theme.border06}`,
+        }}
+      >
+        "{quote}"
+      </div>
 
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
         <a
